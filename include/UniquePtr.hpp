@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <concepts>
 
+
 template <typename T, typename Deleter = std::default_delete<T>>
 class UniquePtr {
 private:
@@ -24,8 +25,11 @@ public:
     UniquePtr(const UniquePtr&) = delete;
     UniquePtr& operator=(const UniquePtr&) = delete;
 
+    // SFINAE
     template <typename U, typename = std::enable_if_t<std::is_convertible_v<U*, T*>>>
-    UniquePtr(UniquePtr<U, Deleter>&& other_ptr) noexcept : ptr(other_ptr.release()), del(std::move(other_ptr.del)) {}
+    UniquePtr(UniquePtr<U, Deleter>&& other_ptr) noexcept : ptr(other_ptr.release()), del(std::move(other_ptr.del)) {
+        other_ptr.ptr = nullptr;
+    }
 
     UniquePtr& operator=(UniquePtr&& other_ptr) noexcept {
         if (this != &other_ptr) {
@@ -60,14 +64,6 @@ public:
 
     bool operator!=(const UniquePtr& other) const noexcept {
         return ptr != other.ptr;
-    }
-
-    bool operator==(std::nullptr_t) const noexcept {
-        return ptr == nullptr;
-    }
-
-    bool operator!=(std::nullptr_t) const noexcept {
-        return ptr != nullptr;
     }
 
     // Friend declaration to allow access to private members

@@ -1,43 +1,38 @@
-cmake_minimum_required(VERSION 3.10)
-project(SmartPtrs)
+cmake_minimum_required(3.20)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+project(SmartPointers)
 
+set(CMAKE_CXX_STANDART 20)
+set(CMAKE_CXX_STANDART_REQUIRED True)
 
-include(FetchContent)
-
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        v1.15.0
-)
-
-FetchContent_MakeAvailable(googletest)
-
-add_executable(SmartPtrs
-    src/main.cpp
-)
-
-target_include_directories(SmartPtrs PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
-)
-
-add_executable(test_smart_pointers
-    tests/UniqueTests.cpp
-)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g$")
 
 
-target_include_directories(test_smart_pointers PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
-)
+target_include_directories(SmartPointers PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-target_link_libraries(test_smart_pointers
-    GTest::gtest
-    GTest::gtest_main
-)
 
-enable_testing()
-add_test(NAME test_smart_pointers COMMAND test_smart_pointers)
+
+find_package(GTest REQUIRED)
+
+if(GTEST_FOUND)
+
+    set(GTEST_INCLUDE_DIR "usr/include")
+    set(GTEST_LIBRARY "/usr/lib/libgtest.a")
+    set(GTEST_MAIN_LIBRARY "/usr/lib/libgtest_main.a")
+
+    
+    add_executable(SmartPointers src/main.cpp)
+
+    enable_testing()
+    add_executable(unique_tests tests/UniqueTests.cpp)
+
+    #add_executable(shared_tests tests/SharedTests.cpp)
+
+    target_link_libraries(unique_tests Gtest::gtest Gtest::gtest_main)
+    
+    target_link_libraries(shared_tests Gtest::gtest Gtest::gtest_main)
+
+    add_test(NAME unique_tests COMMAND unique_tests)
+    add_test(NAME shared_tests COMMAND shared_tests)
+
+endif()

@@ -107,17 +107,6 @@ TEST(UniquePtrTest, ComparisonOperators) {
 }
 
 
-class Base {
-public:
-    virtual ~Base() = default;
-};
-
-
-class Derived : public Base {
-public:
-    int value = 42;
-};
-
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

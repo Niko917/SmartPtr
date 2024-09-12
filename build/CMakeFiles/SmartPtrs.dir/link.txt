@@ -1,1 +1,0 @@
-/usr/bin/c++  -g -g CMakeFiles/SmartPtrs.dir/src/main.cpp.o -o SmartPtrs 

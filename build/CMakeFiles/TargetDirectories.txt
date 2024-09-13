@@ -1,2 +1,0 @@
-/home/niko_std/projects/cpp/labs/SmartPtr/build/CMakeFiles/edit_cache.dir
-/home/niko_std/projects/cpp/labs/SmartPtr/build/CMakeFiles/rebuild_cache.dir

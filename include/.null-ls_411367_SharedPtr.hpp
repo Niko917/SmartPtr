@@ -4,9 +4,8 @@
 #include <optional>
 #include <utility>
 #include "ControlBlock.hpp"
+#include "WeakPtr.hpp"
 
-template <typename T>
-class WeakPtr;
 
 template <typename T, typename Deleter = std::default_delete<T>>
 class SharedPtr { 
@@ -90,7 +89,10 @@ public:
 
     
     size_t use_count() const noexcept {
-        return RefCounter ? RefCounter->SharedCount() : 0;
+        if (ptr) {
+            return RefCounter->SharedCount();
+        }
+        return 0;
     }
 
     T* operator->() const {
@@ -138,9 +140,7 @@ private:
                 }
             }
         }
-        return;
     }
-
 };
 
 
@@ -153,7 +153,4 @@ void MySwap(U& first_, U& second_) noexcept {
 
 
 
-template <typename T>
-void swap(SharedPtr<T>& lhs_, SharedPtr<T>& rhs_) noexcept {
-    lhs_.swap(rhs_);
-}
+

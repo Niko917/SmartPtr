@@ -4,6 +4,10 @@
 #include "ControlBlock.hpp"
 #include "SharedPtr.hpp"
 
+template <typename T, typename Deleter>
+class SharedPtr;
+
+
 template <typename T>
 class WeakPtr {
 private:
@@ -86,11 +90,6 @@ private:
         }
     }
 
-    SharedPtr(T* ptr, RefCounter* cb) : ptr(ptr), RefCounter(RefCounter) {
-        if (RefCounter) {
-            RefCounter->IncrementShared();
-        }
-    }
 
     friend class SharedPtr<T>;
 };

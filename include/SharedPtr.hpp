@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <memory>
 #include <optional>
+#include <stdexcept>
 #include <utility>
 #include "ControlBlock.hpp"
 
@@ -11,145 +12,103 @@ class WeakPtr;
 template <typename T, typename Deleter = std::default_delete<T>>
 class SharedPtr { 
 private:
-    T* ptr;
+    T* ptr_;
     ControlBlock* RefCounter;
-
     Deleter deleter;
-   
+
 public:
-    
-    SharedPtr() noexcept : ptr(nullptr), RefCounter(new ControlBlock(true)), deleter() {}
-
-    explicit SharedPtr(T* ptr) : ptr(ptr), RefCounter(new ControlBlock(true)), deleter() {}
-
-    SharedPtr(T* ptr, ControlBlock* rc) : ptr(ptr), RefCounter(std::move(rc)) {
+    SharedPtr() noexcept : ptr_(nullptr), RefCounter(new ControlBlock(true)), deleter() {}
+    explicit SharedPtr(T* ptr) : ptr_(ptr), RefCounter(new ControlBlock(true)), deleter() {}
+    SharedPtr(T* ptr, ControlBlock* rc) : ptr_(ptr), RefCounter(std::move(rc)) {
         if (RefCounter) {
             RefCounter->IncrementShared();
         }
     }
-
-    
-    SharedPtr(const SharedPtr& other) : ptr(other.get()), RefCounter(other.RefCounter), deleter(other.deleter) {
+    SharedPtr(const SharedPtr& other) : ptr_(other.get()), RefCounter(other.RefCounter), deleter(other.deleter) {
         if (RefCounter) {
             RefCounter->IncrementShared();
         }
     }
-
-    
-    SharedPtr(SharedPtr&& other) noexcept : ptr(other.get()), RefCounter(other.RefCounter), deleter(std::move(other.deleter)) {
-        other.ptr = nullptr;
+    SharedPtr(SharedPtr&& other) noexcept : ptr_(other.get()), RefCounter(other.RefCounter), deleter(std::move(other.deleter)) {
+        other.ptr_ = nullptr;
         other.RefCounter = nullptr;
     }
-
-    
     ~SharedPtr() {
         release();
     }
-
-    
     SharedPtr& operator=(const SharedPtr& other) {
-        if (this != other) {
+        if (this != &other) {
             release();
-
-            ptr = other.ptr;
+            ptr_ = other.ptr_;
             RefCounter = other.RefCounter;
-
             if (RefCounter) {
                 RefCounter->IncrementShared();
             }
         }
         return *this;
     }
-
-
     SharedPtr& operator=(SharedPtr&& other) noexcept {
         if (this != &other) {
             release();
-            ptr = other.ptr;
+            ptr_ = other.ptr_;
             RefCounter = other.RefCounter;
             deleter = std::move(other.deleter);
-
-            other.ptr = nullptr;
+            other.ptr_ = nullptr;
             other.RefCounter = nullptr;
         }
         return *this;
     }
-
-
-    std::optional<T&> operator*() const {
-        if (ptr) {
-            return *ptr;
-        }
-        return std::nullopt;
-    }
-
-
     T* get() const noexcept {
-        return ptr;
+        return ptr_;
     }
-
-    
     size_t use_count() const noexcept {
         return RefCounter ? RefCounter->SharedCount() : 0;
     }
-
-    T* operator->() const {
-        return ptr;
+    T& operator*() const {
+        if (ptr_ == nullptr) {
+            throw std::runtime_error("Dereferencing a nullptr");
+        }
+        return *ptr_;
     }
-
-
+    T* operator->() const {
+        return ptr_;
+    }
     bool unique() const noexcept {
         return use_count() == 1;
     }
-
-
     void reset(T* new_ptr) {
-        if (ptr != new_ptr) {
+        if (ptr_ != new_ptr) {
             release();
-            ptr = new_ptr;
-
+            ptr_ = new_ptr;
+            
             RefCounter = new ControlBlock(true);
             if (RefCounter) {
                 RefCounter->IncrementShared();
             }
         }
-        return;
     }
-
-
-   void swap(SharedPtr& other) noexcept {
-        MySwap(ptr, other.ptr);
-        MySwap(RefCounter, other.RefCounter);
-        MySwap(deleter, other.deleter);
+    void swap(SharedPtr& other) noexcept {
+        std::swap(ptr_, other.ptr_);
+        std::swap(RefCounter, other.RefCounter);
+        std::swap(deleter, other.deleter);
     }
 
 private:
-
     void release() {
         if (RefCounter) {
-            
             RefCounter->DecrementShared();
-            
             if (RefCounter->SharedCount() == 0) {
-                deleter(ptr);
-
+                deleter(ptr_);
                 if (RefCounter->WeakCount() == 0) {
                     delete RefCounter;
                 }
             }
         }
-        return;
     }
+
+
+    friend class WeakPtr<T>;
 };
-
-
-template <typename U>
-void MySwap(U& first_, U& second_) noexcept {
-    U tmp = std::move(first_);
-    first_ = std::move(second_);
-    second_ = std::move(tmp);
-}
-
 
 
 template <typename T>

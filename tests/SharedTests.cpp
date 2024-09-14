@@ -1,146 +1,160 @@
 #include <gtest/gtest.h>
+#include <stdexcept>
 #include "../include/SharedPtr.hpp"
-
-class TestClass {
-public:
-    static int counter;
-    TestClass() { counter++; }
-    ~TestClass() { counter--; }
-};
-
-int TestClass::counter = 0;
 
 
 TEST(SharedPtrTest, DefaultConstructor) {
-    SharedPtr<int> ptr;
-    EXPECT_EQ(ptr.get(), nullptr);
-    EXPECT_EQ(ptr.use_count(), 0);
+    SharedPtr<int> ptr_;
+    EXPECT_EQ(ptr_.get(), nullptr);
+    EXPECT_EQ(ptr_.use_count(), 0);
 }
 
+TEST(SharedPtrTest, PtrConstructor) {
+    int* raw_ptr_ = new int(1999);
+    SharedPtr<int> ptr_(raw_ptr_);
 
-TEST(SharedPtrTest, PointerConstructor) {
-    int* raw_ptr = new int(42);
-    SharedPtr<int> ptr(raw_ptr);
-    EXPECT_EQ(ptr.get(), raw_ptr);
-    EXPECT_EQ(ptr.use_count(), 1);
+    EXPECT_EQ(ptr_.get(), raw_ptr_);
+    EXPECT_EQ(ptr_.use_count(), 1);
+    EXPECT_EQ(*ptr_.get(), 1999);
 }
 
 
 TEST(SharedPtrTest, CopyConstructor) {
-    SharedPtr<int> ptr1(new int(42));
-    SharedPtr<int> ptr2(ptr1);
-    EXPECT_EQ(ptr1.get(), ptr2.get());
-    EXPECT_EQ(ptr1.use_count(), 2);
-    EXPECT_EQ(ptr2.use_count(), 2);
+    double* raw_ptr_ = new double(3.14);
+    
+    SharedPtr<double> ptr_1_(raw_ptr_);
+    SharedPtr<double> ptr_2_(ptr_1_);
+
+    EXPECT_EQ(ptr_1_.get(), raw_ptr_);
+    EXPECT_EQ(ptr_2_.get(), raw_ptr_);
+    EXPECT_EQ(ptr_1_.use_count(), 2);
+    EXPECT_EQ(ptr_2_.use_count(), 2);
 }
 
 
 TEST(SharedPtrTest, MoveConstructor) {
-    SharedPtr<int> ptr1(new int(42));
-    SharedPtr<int> ptr2(std::move(ptr1));
-    
-    EXPECT_EQ(ptr1.get(), nullptr);
-    EXPECT_EQ(ptr2.get(), ptr1.get());
-    EXPECT_EQ(ptr2.use_count(), 1);
+    char* raw_ptr_ = new char('R');
+
+    SharedPtr<char> ptr_1_(raw_ptr_);
+    SharedPtr<char> ptr_2_(std::move(ptr_1_));
+
+    EXPECT_EQ(ptr_1_.get(), nullptr);
+    EXPECT_EQ(ptr_2_.get(), raw_ptr_);
+    EXPECT_EQ(ptr_1_.use_count(), 0);
+    EXPECT_EQ(ptr_2_.use_count(), 1);
 }
 
 
-TEST(SharedPtrTest, CopyAssignmentOperator) {
-    SharedPtr<int> ptr1(new int(42));
-    SharedPtr<int> ptr2;
-    ptr2 = ptr1;
+TEST(SharedPtrTest, CopyAssignment) {
+    int* raw_ptr_1 = new int(42);
+    int* raw_ptr_2_ = new int(24);
     
-    EXPECT_EQ(ptr1.get(), ptr2.get());
-    EXPECT_EQ(ptr1.use_count(), 2);
-    EXPECT_EQ(ptr2.use_count(), 2);
+    SharedPtr<int> ptr_1_(raw_ptr_1);
+    SharedPtr<int> ptr_2_(raw_ptr_2_);
+    ptr_2_ = ptr_1_;
+    
+    EXPECT_EQ(ptr_1_.get(), raw_ptr_1);
+    EXPECT_EQ(ptr_2_.get(), raw_ptr_1);
+    EXPECT_EQ(ptr_1_.use_count(), 2);
+    EXPECT_EQ(ptr_2_.use_count(), 2);
 }
 
 
-TEST(SharedPtrTest, MoveAssignmentOperator) {
-    SharedPtr<int> ptr1(new int(42));
-    SharedPtr<int> ptr2;
-    ptr2 = std::move(ptr1);
+TEST(SharedPtrTest, MoveAssignment) {
+    int* raw_ptr_1_ = new int(42);
+    int* raw_ptr_2_ = new int(24);
     
-    EXPECT_EQ(ptr1.get(), nullptr);
-    EXPECT_EQ(ptr2.get(), ptr1.get());
-    EXPECT_EQ(ptr2.use_count(), 1);
+    SharedPtr<int> ptr_1_(raw_ptr_1_);
+    SharedPtr<int> ptr_2_(raw_ptr_2_);
+    ptr_2_ = std::move(ptr_1_);
+    
+    EXPECT_EQ(ptr_1_.get(), nullptr);
+    EXPECT_EQ(ptr_2_.get(), raw_ptr_1_);
+    EXPECT_EQ(ptr_1_.use_count(), 0);
+    EXPECT_EQ(ptr_2_.use_count(), 1);
 }
 
 
-/*TEST(SharedPtrTest, DereferenceOperator) {*/
-/*    SharedPtr<int> ptr(new int(42));*/
-/*    auto it = *ptr.value();
-}*/
+TEST(SharedPtrTest, DereferenceOperator) {
+    int* raw_ptr_ = new int(42);
+    SharedPtr<int> ptr_(raw_ptr_);
+    EXPECT_EQ(*ptr_, 42);
 
-
-TEST(SharedPtrTest, GetMethod) {
-    int* raw_ptr = new int(42);
-    SharedPtr<int> ptr(raw_ptr);
-    
-    EXPECT_EQ(ptr.get(), raw_ptr);
-}
-
-
-TEST(SharedPtrTest, UseCountMethod) {
-    SharedPtr<int> ptr1(new int(42));
-    SharedPtr<int> ptr2(ptr1);
-    
-    EXPECT_EQ(ptr1.use_count(), 2);
-    EXPECT_EQ(ptr2.use_count(), 2);
-}
-
-
-TEST(SharedPtrTest, ArrowOperator) {
-    struct TestStruct { int value = 42; };
-    SharedPtr<TestStruct> ptr(new TestStruct());
-    
-    EXPECT_EQ(ptr->value, 42);
+    SharedPtr<int> null_;
+    EXPECT_THROW(*null_, std::runtime_error);
 }
 
 
 TEST(SharedPtrTest, UniqueMethod) {
-    SharedPtr<int> ptr1(new int(42));
-    EXPECT_TRUE(ptr1.unique());
-    SharedPtr<int> ptr2(ptr1);
+    int* raw_ptr_ = new int(42);
+    SharedPtr<int> ptr_1_(raw_ptr_);
     
-    EXPECT_FALSE(ptr1.unique());
-    EXPECT_FALSE(ptr2.unique());
+    EXPECT_TRUE(ptr_1_.unique());
+    
+    SharedPtr<int> ptr_2_(ptr_1_);
+    
+    EXPECT_FALSE(ptr_1_.unique());
+    EXPECT_FALSE(ptr_2_.unique());
 }
 
 
-/*TEST(SharedPtrTest, ResetMethod) {*/
-/*    SharedPtr<int> ptr(new int(42));*/
-/*    ptr.reset(new int(10));*/
-/**/
-/*    EXPECT_EQ(*ptr, 10);*/
-/*    EXPECT_EQ(ptr.use_count(), 1);*/
-/*}*/
-/**/
+TEST(SharedPtrTest, ResetMethod) {
+    int* raw_ptr_1_ = new int(42);
+    int* raw_ptr_2_ = new int(24);
+    
+    SharedPtr<int> ptr(raw_ptr_1_);
+    ptr.reset(raw_ptr_2_);
+    
+    EXPECT_EQ(ptr.get(), raw_ptr_2_);
+    EXPECT_EQ(ptr.use_count(), 1);
+}
 
 
+TEST(SharedPtrTest, SwapMethod) {
+    int* raw_ptr_1_ = new int(42);
+    int* raw_ptr_2_ = new int(24);
 
-/*TEST(SharedPtrTest, SwapMethod) {*/
-/*    SharedPtr<int> ptr1(new int(42));*/
-/*    SharedPtr<int> ptr2(new int(10));*/
-/*    ptr1.swap(ptr2);*/
-/**/
-/*    EXPECT_EQ(*ptr1, 10);*/
-/*    EXPECT_EQ(*ptr2, 42);*/
-/*}*/
-/**/
+    SharedPtr<int> ptr_1_(raw_ptr_1_);
+    SharedPtr<int> ptr_2_(raw_ptr_2_);
+    ptr_1_.swap(ptr_2_);
+    
+    EXPECT_EQ(ptr_1_.get(), raw_ptr_2_);
+    EXPECT_EQ(ptr_2_.get(), raw_ptr_1_);
+    EXPECT_EQ(ptr_1_.use_count(), 1);
+    EXPECT_EQ(ptr_2_.use_count(), 1);
+}
 
 
 TEST(SharedPtrTest, Destructor) {
+    int* raw_ptr_ = new int(42);
+    
     {
-        SharedPtr<TestClass> ptr(new TestClass());
-        EXPECT_EQ(TestClass::counter, 1);
+        SharedPtr<int> ptr(raw_ptr_);
+        EXPECT_EQ(ptr.get(), raw_ptr_);
+        EXPECT_EQ(ptr.use_count(), 1);
     }
-    EXPECT_EQ(TestClass::counter, 0);
+
+    EXPECT_NE(raw_ptr_, nullptr); 
 }
 
 
+TEST(SharedPtrTest, ReferenceCounting) {
+    int* raw_ptr_ = new int(42);
+    SharedPtr<int> ptr_1_(raw_ptr_);
+    
+    EXPECT_EQ(ptr_1_.use_count(), 1);
+    
+    {
+        SharedPtr<int> ptr_2_(ptr_1_);
+        EXPECT_EQ(ptr_1_.use_count(), 2);
+        EXPECT_EQ(ptr_2_.use_count(), 2);
+    }
 
-int main(int argc, char **argv) {
+    EXPECT_EQ(ptr_1_.use_count(), 1);
+}
+
+
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

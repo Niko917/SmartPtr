@@ -110,10 +110,3 @@ TEST(WeakPtrTest, LockMethod) {
     
     EXPECT_EQ(locked_ptr.get(), nullptr);
 }
-
-
-
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

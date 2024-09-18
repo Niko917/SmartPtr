@@ -1,7 +1,6 @@
 #pragma once
 #include <cstddef>
 #include <memory>
-#include <optional>
 #include <stdexcept>
 #include <utility>
 #include "ControlBlock.hpp"
@@ -17,25 +16,42 @@ private:
     Deleter deleter;
 
 public:
-    SharedPtr() noexcept : ptr_(nullptr), RefCounter(new ControlBlock(true)), deleter() {}
+    SharedPtr() noexcept : ptr_(nullptr), RefCounter(new ControlBlock(false)), deleter() {}
+    
     explicit SharedPtr(T* ptr) : ptr_(ptr), RefCounter(new ControlBlock(true)), deleter() {}
+    
     SharedPtr(T* ptr, ControlBlock* rc) : ptr_(ptr), RefCounter(std::move(rc)) {
         if (RefCounter) {
             RefCounter->IncrementShared();
         }
     }
+
     SharedPtr(const SharedPtr& other) : ptr_(other.get()), RefCounter(other.RefCounter), deleter(other.deleter) {
         if (RefCounter) {
             RefCounter->IncrementShared();
         }
     }
+
     SharedPtr(SharedPtr&& other) noexcept : ptr_(other.get()), RefCounter(other.RefCounter), deleter(std::move(other.deleter)) {
         other.ptr_ = nullptr;
         other.RefCounter = nullptr;
     }
+
     ~SharedPtr() {
         release();
     }
+
+
+    SharedPtr(const WeakPtr<T>& weak) : ptr_(weak.ptr_), RefCounter(weak.RefCounter) {
+        if (RefCounter && RefCounter->SharedCount() > 0) {
+            RefCounter->IncrementShared();
+        }
+        else {
+            ptr_ = nullptr;
+            RefCounter = nullptr;
+        }
+    }
+
     SharedPtr& operator=(const SharedPtr& other) {
         if (this != &other) {
             release();
@@ -47,6 +63,7 @@ public:
         }
         return *this;
     }
+
     SharedPtr& operator=(SharedPtr&& other) noexcept {
         if (this != &other) {
             release();
@@ -58,40 +75,44 @@ public:
         }
         return *this;
     }
+
     T* get() const noexcept {
         return ptr_;
     }
+
     size_t use_count() const noexcept {
         return RefCounter ? RefCounter->SharedCount() : 0;
     }
+
     T& operator*() const {
         if (ptr_ == nullptr) {
             throw std::runtime_error("Dereferencing a nullptr");
         }
         return *ptr_;
     }
+
     T* operator->() const {
         return ptr_;
     }
+
     bool unique() const noexcept {
         return use_count() == 1;
     }
-    void reset(T* new_ptr) {
+
+    void reset(T* new_ptr = nullptr) {
         if (ptr_ != new_ptr) {
-            release();
-            ptr_ = new_ptr;
+
+            ptr_ = new_ptr; 
             
-            RefCounter = new ControlBlock(true);
-            if (RefCounter) {
-                RefCounter->IncrementShared();
+            if (new_ptr) {
+                RefCounter = new ControlBlock(true);
+            }
+            else {
+                RefCounter = nullptr;
             }
         }
     }
-    void swap(SharedPtr& other) noexcept {
-        std::swap(ptr_, other.ptr_);
-        std::swap(RefCounter, other.RefCounter);
-        std::swap(deleter, other.deleter);
-    }
+
 
 private:
     void release() {
@@ -103,6 +124,8 @@ private:
                     delete RefCounter;
                 }
             }
+            ptr_ = nullptr;
+            RefCounter = nullptr;
         }
     }
 
@@ -111,7 +134,3 @@ private:
 };
 
 
-template <typename T>
-void swap(SharedPtr<T>& lhs_, SharedPtr<T>& rhs_) noexcept {
-    lhs_.swap(rhs_);
-}

@@ -1,51 +1,44 @@
 #pragma once
-#include <concepts>
-#include <iostream>
+#include <cstddef>
+#include <memory>
+#include <utility>
 #include "ControlBlock.hpp"
 #include "SharedPtr.hpp"
-
-template <typename T, typename Deleter>
-class SharedPtr;
 
 template <typename T>
 class WeakPtr {
 private:
-    T* ptr;
+    T* ptr_;
     ControlBlock* RefCounter;
 
 public:
-    WeakPtr() : ptr(nullptr), RefCounter(new ControlBlock(false)) {}
-    WeakPtr(const SharedPtr<T>& shared) : ptr(shared.ptr_), RefCounter(shared.RefCounter) {
+    WeakPtr() noexcept : ptr_(nullptr), RefCounter(nullptr) {}
+
+    WeakPtr(const SharedPtr<T>& shared) noexcept : ptr_(shared.ptr_), RefCounter(shared.RefCounter) {
         if (RefCounter) {
             RefCounter->IncrementWeak();
         }
     }
-    WeakPtr(const WeakPtr<T>& other_weak) : ptr(other_weak.ptr), RefCounter(other_weak.RefCounter) {
+
+    WeakPtr(const WeakPtr& other) noexcept : ptr_(other.ptr_), RefCounter(other.RefCounter) {
         if (RefCounter) {
             RefCounter->IncrementWeak();
         }
     }
-    WeakPtr(WeakPtr&& other_weak) noexcept : ptr(other_weak.ptr), RefCounter(other_weak.RefCounter) {
-        other_weak.ptr = nullptr;
-        other_weak.RefCounter = nullptr;
+
+    WeakPtr(WeakPtr&& other) noexcept : ptr_(other.ptr_), RefCounter(other.RefCounter) {
+        other.ptr_ = nullptr;
+        other.RefCounter = nullptr;
     }
+
     ~WeakPtr() {
         release();
     }
-    WeakPtr& operator=(WeakPtr&& other) noexcept {
+
+    WeakPtr& operator=(const WeakPtr& other) noexcept {
         if (this != &other) {
             release();
-            ptr = other.ptr;
-            RefCounter = other.RefCounter;
-            other.ptr = nullptr;
-            other.RefCounter = nullptr;
-        }
-        return *this;
-    }
-    WeakPtr& operator=(const WeakPtr& other) {
-        if (this != &other) {
-            release();
-            ptr = other.ptr;
+            ptr_ = other.ptr_;
             RefCounter = other.RefCounter;
             if (RefCounter) {
                 RefCounter->IncrementWeak();
@@ -53,14 +46,45 @@ public:
         }
         return *this;
     }
-    inline bool expired() const noexcept {
-        return RefCounter == nullptr || RefCounter->SharedCount() == 0;
-    }
-    SharedPtr<T> lock() const {
-        if (expired()) {
-            return SharedPtr<T>();
+
+    WeakPtr& operator=(WeakPtr&& other) noexcept {
+        if (this != &other) {
+            release();
+            ptr_ = other.ptr_;
+            RefCounter = other.RefCounter;
+            other.ptr_ = nullptr;
+            other.RefCounter = nullptr;
         }
-        return SharedPtr<T>(ptr, RefCounter);
+        return *this;
+    }
+
+    WeakPtr& operator=(const SharedPtr<T>& shared) noexcept {
+        release();
+        ptr_ = shared.ptr_;
+        RefCounter = shared.RefCounter;
+        if (RefCounter) {
+            RefCounter->IncrementWeak();
+        }
+        return *this;
+    }
+
+    SharedPtr<T> lock() const noexcept {
+        if (RefCounter && RefCounter->SharedCount() > 0) {
+            return SharedPtr<T>(*this);
+        }
+        return SharedPtr<T>();
+    }
+
+    size_t use_count() const noexcept {
+        return RefCounter ? RefCounter->SharedCount() : 0;
+    }
+
+    bool expired() const noexcept {
+        return use_count() == 0;
+    }
+
+    void reset() noexcept {
+        release();
     }
 
 private:
@@ -70,6 +94,8 @@ private:
             if (RefCounter->SharedCount() == 0 && RefCounter->WeakCount() == 0) {
                 delete RefCounter;
             }
+            ptr_ = nullptr;
+            RefCounter = nullptr;
         }
     }
 

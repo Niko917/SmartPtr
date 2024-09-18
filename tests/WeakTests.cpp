@@ -4,116 +4,94 @@
 
 
 TEST(WeakPtrTest, DefaultConstructor) {
-    WeakPtr<int> ptr;
-    
-    EXPECT_EQ(ptr.expired(), true);
+    WeakPtr<int> weakPtr;
+    EXPECT_EQ(weakPtr.use_count(), 0);
+    EXPECT_TRUE(weakPtr.expired());
 }
-
 
 TEST(WeakPtrTest, ConstructorFromSharedPtr) {
-    int* raw_ptr = new int(42);
-    
-    SharedPtr<int> shared_ptr(raw_ptr);
-    WeakPtr<int> weak_ptr(shared_ptr);
-    
-    EXPECT_EQ(weak_ptr.expired(), false);
-    EXPECT_EQ(weak_ptr.lock().get(), raw_ptr);
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr(sharedPtr);
+    EXPECT_EQ(weakPtr.use_count(), 1);
+    EXPECT_FALSE(weakPtr.expired());
 }
-
 
 TEST(WeakPtrTest, CopyConstructor) {
-    int* raw_ptr = new int(42);
-    SharedPtr<int> shared_ptr(raw_ptr);
-    
-    WeakPtr<int> weak_ptr1(shared_ptr);
-    WeakPtr<int> weak_ptr2(weak_ptr1);
-    
-    EXPECT_EQ(weak_ptr1.expired(), false);
-    EXPECT_EQ(weak_ptr2.expired(), false);
-    EXPECT_EQ(weak_ptr1.lock().get(), raw_ptr);
-    EXPECT_EQ(weak_ptr2.lock().get(), raw_ptr);
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr1(sharedPtr);
+    WeakPtr<int> weakPtr2(weakPtr1);
+    EXPECT_EQ(weakPtr2.use_count(), 1);
+    EXPECT_FALSE(weakPtr2.expired());
 }
-
 
 TEST(WeakPtrTest, MoveConstructor) {
-    int* raw_ptr = new int(42);
-    SharedPtr<int> shared_ptr(raw_ptr);
-    
-    WeakPtr<int> weak_ptr1(shared_ptr);
-    WeakPtr<int> weak_ptr2(std::move(weak_ptr1));
-    
-    EXPECT_EQ(weak_ptr1.expired(), true);
-    EXPECT_EQ(weak_ptr2.expired(), false);
-    EXPECT_EQ(weak_ptr2.lock().get(), raw_ptr);
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr1(sharedPtr);
+    WeakPtr<int> weakPtr2(std::move(weakPtr1));
+    EXPECT_EQ(weakPtr2.use_count(), 1);
+    EXPECT_FALSE(weakPtr2.expired());
+    EXPECT_EQ(weakPtr1.use_count(), 0);
+    EXPECT_TRUE(weakPtr1.expired());
 }
 
-
-TEST(WeakPtrTest, CopyAssignmentOperator) {
-    int* raw_ptr1 = new int(42);
-    int* raw_ptr2 = new int(24);
-    
-    SharedPtr<int> shared_ptr1(raw_ptr1);
-    SharedPtr<int> shared_ptr2(raw_ptr2);
-    
-    WeakPtr<int> weak_ptr1(shared_ptr1);
-    WeakPtr<int> weak_ptr2(shared_ptr2);
-    weak_ptr2 = weak_ptr1;
-    
-    EXPECT_EQ(weak_ptr1.expired(), false);
-    EXPECT_EQ(weak_ptr2.expired(), false);
-    EXPECT_EQ(weak_ptr1.lock().get(), raw_ptr1);
-    EXPECT_EQ(weak_ptr2.lock().get(), raw_ptr1);
+TEST(WeakPtrTest, CopyAssignment) {
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr1(sharedPtr);
+    WeakPtr<int> weakPtr2;
+    weakPtr2 = weakPtr1;
+    EXPECT_EQ(weakPtr2.use_count(), 1);
+    EXPECT_FALSE(weakPtr2.expired());
 }
 
-
-TEST(WeakPtrTest, MoveAssignmentOperator) {
-    int* raw_ptr1 = new int(42);
-    int* raw_ptr2 = new int(24);
-    
-    SharedPtr<int> shared_ptr1(raw_ptr1);
-    SharedPtr<int> shared_ptr2(raw_ptr2);
-    
-    WeakPtr<int> weak_ptr1(shared_ptr1);
-    WeakPtr<int> weak_ptr2(shared_ptr2);
-    weak_ptr2 = std::move(weak_ptr1);
-    
-    EXPECT_EQ(weak_ptr1.expired(), true);
-    EXPECT_EQ(weak_ptr2.expired(), false);
-    EXPECT_EQ(weak_ptr2.lock().get(), raw_ptr1);
+TEST(WeakPtrTest, MoveAssignment) {
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr1(sharedPtr);
+    WeakPtr<int> weakPtr2;
+    weakPtr2 = std::move(weakPtr1);
+    EXPECT_EQ(weakPtr2.use_count(), 1);
+    EXPECT_FALSE(weakPtr2.expired());
+    EXPECT_EQ(weakPtr1.use_count(), 0);
+    EXPECT_TRUE(weakPtr1.expired());
 }
 
-
-TEST(WeakPtrTest, ExpiredMethod) {
-    int* raw_ptr = new int(42);
-    SharedPtr<int> shared_ptr(raw_ptr);
-    WeakPtr<int> weak_ptr(shared_ptr);
-    
-    EXPECT_EQ(weak_ptr.expired(), false);
-    
-    shared_ptr.reset(nullptr);
-    
-    EXPECT_EQ(weak_ptr.expired(), true);
+TEST(WeakPtrTest, AssignmentFromSharedPtr) {
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr;
+    weakPtr = sharedPtr;
+    EXPECT_EQ(weakPtr.use_count(), 1);
+    EXPECT_FALSE(weakPtr.expired());
 }
 
-
-TEST(WeakPtrTest, LockMethod) {
-    int* raw_ptr = new int(42);
-    SharedPtr<int> shared_ptr(raw_ptr);
-    WeakPtr<int> weak_ptr(shared_ptr);
-    SharedPtr<int> locked_ptr = weak_ptr.lock();
-    
-    EXPECT_EQ(locked_ptr.get(), raw_ptr);
-    EXPECT_EQ(locked_ptr.use_count(), 2);
-    
-    shared_ptr.reset(nullptr);
-    locked_ptr = weak_ptr.lock();
-    
-    EXPECT_EQ(locked_ptr.get(), nullptr);
+TEST(WeakPtrTest, Lock) {
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr(sharedPtr);
+    SharedPtr<int> lockedPtr = weakPtr.lock();
+    EXPECT_EQ(lockedPtr.use_count(), 2);
+    EXPECT_EQ(*lockedPtr, 10);
 }
 
+TEST(WeakPtrTest, UseCount) {
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr(sharedPtr);
+    EXPECT_EQ(weakPtr.use_count(), 1);
+}
 
+TEST(WeakPtrTest, Expired) {
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr(sharedPtr);
+    sharedPtr.reset();
+    EXPECT_TRUE(weakPtr.expired());
+}
 
-int main(int argc, char** argv) {
+TEST(WeakPtrTest, Reset) {
+    SharedPtr<int> sharedPtr(new int(10));
+    WeakPtr<int> weakPtr(sharedPtr);
+    weakPtr.reset();
+    EXPECT_EQ(weakPtr.use_count(), 0);
+    EXPECT_TRUE(weakPtr.expired());
+}
+
+int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

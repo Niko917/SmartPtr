@@ -110,20 +110,6 @@ TEST(SharedPtrTest, ResetMethod) {
 }
 
 
-TEST(SharedPtrTest, SwapMethod) {
-    int* raw_ptr_1_ = new int(42);
-    int* raw_ptr_2_ = new int(24);
-
-    SharedPtr<int> ptr_1_(raw_ptr_1_);
-    SharedPtr<int> ptr_2_(raw_ptr_2_);
-    ptr_1_.swap(ptr_2_);
-    
-    EXPECT_EQ(ptr_1_.get(), raw_ptr_2_);
-    EXPECT_EQ(ptr_2_.get(), raw_ptr_1_);
-    EXPECT_EQ(ptr_1_.use_count(), 1);
-    EXPECT_EQ(ptr_2_.use_count(), 1);
-}
-
 
 TEST(SharedPtrTest, Destructor) {
     int* raw_ptr_ = new int(42);

@@ -11,27 +11,31 @@ private:
 public:
     ControlBlock(bool is_shared_) : shared_counter_(is_shared_ ? 1 : 0), weak_counter_(is_shared_ ? 0 : 1) {}
 
-    inline constexpr void IncrementShared() noexcept {
+    inline void IncrementShared() noexcept {
         ++shared_counter_;
     }
 
-    inline constexpr void DecrementShared() noexcept {
-        --shared_counter_;
+    inline void DecrementShared() noexcept {
+        if (shared_counter_ > 0) {
+            --shared_counter_;
+        }
     }
 
-    inline constexpr size_t SharedCount() const noexcept {
+    inline size_t SharedCount() const noexcept {
         return shared_counter_;
     }
 
-    inline constexpr void IncrementWeak() noexcept {
+    inline void IncrementWeak() noexcept {
         ++weak_counter_;
     }
 
-    inline constexpr void DecrementWeak() noexcept {
-        --weak_counter_;
+    inline void DecrementWeak() noexcept {
+        if (weak_counter_ > 0) {
+            --weak_counter_;
+        }
     }
 
-    inline constexpr size_t WeakCount() const noexcept {
+    inline size_t WeakCount() const noexcept {
         return weak_counter_;
     }
 };

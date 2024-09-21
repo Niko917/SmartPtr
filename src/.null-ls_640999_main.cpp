@@ -11,15 +11,15 @@
 class ResourceInt {
 public:
     ResourceInt(const std::string& name, int value) : name_(name), value_(value) {
-        std::cout << "\nResource " << name_ << " created with value " << value_ << std::endl;
+        std::cout << "Resource " << name_ << " created with value " << value_ << std::endl;
     }
 
     ~ResourceInt() {
-        std::cout << "\nResource " << name_ << " destroyed" << std::endl;
+        std::cout << "Resource " << name_ << " destroyed" << std::endl;
     }
 
     void print() const {
-        std::cout << "\nResource " << name_ << " has value " << value_ << std::endl;
+        std::cout << "Resource " << name_ << " has value " << value_ << std::endl;
     }
 
 private:
@@ -30,15 +30,15 @@ private:
 class ResourceString {
 public:
     ResourceString(const std::string& name, const std::string& value) : name_(name), value_(value) {
-        std::cout << "\nResource " << name_ << " created with value " << value_ << std::endl;
+        std::cout << "Resource " << name_ << " created with value " << value_ << std::endl;
     }
 
     ~ResourceString() {
-        std::cout << "\nResource " << name_ << " destroyed" << std::endl;
+        std::cout << "Resource " << name_ << " destroyed" << std::endl;
     }
 
     void print() const {
-        std::cout << "\nResource " << name_ << " has value " << value_ << std::endl;
+        std::cout << "Resource " << name_ << " has value " << value_ << std::endl;
     }
 
 private:
@@ -49,17 +49,17 @@ private:
 class ResourceVectorInt {
 public:
     ResourceVectorInt(const std::string& name, const std::vector<int>& value) : name_(name), value_(value) {
-        std::cout << "\nResource " << name_ << " created with value ";
+        std::cout << "Resource " << name_ << " created with value ";
         for (int v : value_) std::cout << v << " ";
         std::cout << std::endl;
     }
 
     ~ResourceVectorInt() {
-        std::cout << "\nResource " << name_ << " destroyed" << std::endl;
+        std::cout << "Resource " << name_ << " destroyed" << std::endl;
     }
 
     void print() const {
-        std::cout << "\nResource " << name_ << " has value ";
+        std::cout << "Resource " << name_ << " has value ";
         for (int v : value_) std::cout << v << " ";
         std::cout << std::endl;
     }
@@ -88,46 +88,46 @@ void sharedPtrMenu() {
 
     while (true) {
         std::cout << "\nSharedPtr Menu:\n";
-        std::cout << "\n1.  ➤   Create SharedPtr\n";
-        std::cout << "\n2.  ➤   Create SharedPtr to Existing Resource\n";
-        std::cout << "\n3.  ➤   Get Resource\n";
-        std::cout << "\n4.  ➤   Use Count\n";
-        std::cout << "\n5.  ➤   Reset\n";
-        std::cout << "\n6.  ➤   List All SharedPtrs\n";
-        std::cout << "\n7.  ➤   Remove SharedPtr\n";
-        std::cout << "\n8.  ➤   Create Multiple SharedPtrs\n";
-        std::cout << "\n9.  ➤   Remove Created SharedPtrs\n";
-        std::cout << "\n10. ➤   Back to Main Menu\n";
-        std::cout << "\nEnter your choice: ";
+        std::cout << "1. ➤ Create SharedPtr\n";
+        std::cout << "2. ➤ Create SharedPtr to Existing Resource\n";
+        std::cout << "3. ➤ Get Resource\n";
+        std::cout << "4. ➤ Use Count\n";
+        std::cout << "5. ➤ Reset\n";
+        std::cout << "6. ➤ List All SharedPtrs\n";
+        std::cout << "7. ➤ Remove SharedPtr\n";
+        std::cout << "8. ➤ Create Multiple SharedPtrs\n";
+        std::cout << "9. ➤ Remove Created SharedPtrs\n";
+        std::cout << "10. ➤ Back to Main Menu\n";
+        std::cout << "Enter your choice: ";
 
         int choice;
         std::cin >> choice;
         clearInputBuffer();
 
         if (choice == 1) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
-            std::cout << "\nEnter resource name: ";
+            std::cout << "Enter resource name: ";
             std::cin >> name;
             clearInputBuffer();
 
             if (type == 1) {
                 int value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
                 sharedPtrsInt.push_back(SharedPtr<ResourceInt>(new ResourceInt(name, value)));
             } else if (type == 2) {
                 std::string value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
                 sharedPtrsString.push_back(SharedPtr<ResourceString>(new ResourceString(name, value)));
             } else if (type == 3) {
                 std::vector<int> value;
-                std::cout << "\nEnter resource value (comma-separated integers): ";
+                std::cout << "Enter resource value (comma-separated integers): ";
                 std::string input;
                 std::cin >> input;
                 clearInputBuffer();
@@ -139,56 +139,56 @@ void sharedPtrMenu() {
                 }
                 sharedPtrsVectorInt.push_back(SharedPtr<ResourceVectorInt>(new ResourceVectorInt(name, value)));
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 2) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1 && !sharedPtrsInt.empty()) {
-                std::cout << "\nEnter index of existing SharedPtr (0-" << sharedPtrsInt.size() - 1 << "): ";
+                std::cout << "Enter index of existing SharedPtr (0-" << sharedPtrsInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsInt.size()) {
                     sharedPtrsInt.push_back(sharedPtrsInt[index]);
-                    std::cout << "\nSharedPtr created to existing resource\n";
+                    std::cout << "SharedPtr created to existing resource\n";
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 2 && !sharedPtrsString.empty()) {
-                std::cout << "\nEnter index of existing SharedPtr (0-" << sharedPtrsString.size() - 1 << "): ";
+                std::cout << "Enter index of existing SharedPtr (0-" << sharedPtrsString.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsString.size()) {
                     sharedPtrsString.push_back(sharedPtrsString[index]);
-                    std::cout << "\nSharedPtr created to existing resource\n";
+                    std::cout << "SharedPtr created to existing resource\n";
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 3 && !sharedPtrsVectorInt.empty()) {
-                std::cout << "\nEnter index of existing SharedPtr (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
+                std::cout << "Enter index of existing SharedPtr (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsVectorInt.size()) {
                     sharedPtrsVectorInt.push_back(sharedPtrsVectorInt[index]);
-                    std::cout << "\nSharedPtr created to existing resource\n";
+                    std::cout << "SharedPtr created to existing resource\n";
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else {
-                std::cout << "\nNo existing SharedPtrs\n";
+                std::cout << "No existing SharedPtrs\n";
             }
         } else if (choice == 3) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1 && !sharedPtrsInt.empty()) {
-                std::cout << "\nEnter index of SharedPtr (0-" << sharedPtrsInt.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr (0-" << sharedPtrsInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
@@ -196,13 +196,13 @@ void sharedPtrMenu() {
                     if (sharedPtrsInt[index]) {
                         sharedPtrsInt[index]->print();
                     } else {
-                        std::cout << "\nNo resource managed by SharedPtr\n";
+                        std::cout << "No resource managed by SharedPtr\n";
                     }
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 2 && !sharedPtrsString.empty()) {
-                std::cout << "\nEnter index of SharedPtr (0-" << sharedPtrsString.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr (0-" << sharedPtrsString.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
@@ -210,13 +210,13 @@ void sharedPtrMenu() {
                     if (sharedPtrsString[index]) {
                         sharedPtrsString[index]->print();
                     } else {
-                        std::cout << "\nNo resource managed by SharedPtr\n";
+                        std::cout << "No resource managed by SharedPtr\n";
                     }
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 3 && !sharedPtrsVectorInt.empty()) {
-                std::cout << "\nEnter index of SharedPtr (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
@@ -224,188 +224,188 @@ void sharedPtrMenu() {
                     if (sharedPtrsVectorInt[index]) {
                         sharedPtrsVectorInt[index]->print();
                     } else {
-                        std::cout << "\nNo resource managed by SharedPtr\n";
+                        std::cout << "No resource managed by SharedPtr\n";
                     }
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else {
-                std::cout << "\nNo SharedPtrs\n";
+                std::cout << "No SharedPtrs\n";
             }
         } else if (choice == 4) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1 && !sharedPtrsInt.empty()) {
-                std::cout << "\nEnter index of SharedPtr (0-" << sharedPtrsInt.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr (0-" << sharedPtrsInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsInt.size()) {
-                    std::cout << "\nUse count: " << sharedPtrsInt[index].use_count() << std::endl;
+                    std::cout << "Use count: " << sharedPtrsInt[index].use_count() << std::endl;
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 2 && !sharedPtrsString.empty()) {
-                std::cout << "\nEnter index of SharedPtr (0-" << sharedPtrsString.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr (0-" << sharedPtrsString.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsString.size()) {
-                    std::cout << "\nUse count: " << sharedPtrsString[index].use_count() << std::endl;
+                    std::cout << "Use count: " << sharedPtrsString[index].use_count() << std::endl;
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 3 && !sharedPtrsVectorInt.empty()) {
-                std::cout << "\nEnter index of SharedPtr (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsVectorInt.size()) {
-                    std::cout << "\nUse count: " << sharedPtrsVectorInt[index].use_count() << std::endl;
+                    std::cout << "Use count: " << sharedPtrsVectorInt[index].use_count() << std::endl;
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else {
-                std::cout << "\nNo SharedPtrs\n";
+                std::cout << "No SharedPtrs\n";
             }
         } else if (choice == 5) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1 && !sharedPtrsInt.empty()) {
-                std::cout << "\nEnter index of SharedPtr to reset (0-" << sharedPtrsInt.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr to reset (0-" << sharedPtrsInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsInt.size()) {
                     sharedPtrsInt[index].reset();
-                    std::cout << "\nSharedPtr reset\n";
+                    std::cout << "SharedPtr reset\n";
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 2 && !sharedPtrsString.empty()) {
-                std::cout << "\nEnter index of SharedPtr to reset (0-" << sharedPtrsString.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr to reset (0-" << sharedPtrsString.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsString.size()) {
                     sharedPtrsString[index].reset();
-                    std::cout << "\nSharedPtr reset\n";
+                    std::cout << "SharedPtr reset\n";
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 3 && !sharedPtrsVectorInt.empty()) {
-                std::cout << "\nEnter index of SharedPtr to reset (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr to reset (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsVectorInt.size()) {
                     sharedPtrsVectorInt[index].reset();
-                    std::cout << "\nSharedPtr reset\n";
+                    std::cout << "SharedPtr reset\n";
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else {
-                std::cout << "\nNo SharedPtrs\n";
+                std::cout << "No SharedPtrs\n";
             }
         } else if (choice == 6) {
-            std::cout << "\nSharedPtrs (int):\n";
+            std::cout << "SharedPtrs (int):\n";
             if (!sharedPtrsInt.empty()) {
                 for (size_t i = 0; i < sharedPtrsInt.size(); ++i) {
-                    std::cout << "\nSharedPtr " << i << ": ";
+                    std::cout << "SharedPtr " << i << ": ";
                     if (sharedPtrsInt[i]) {
                         sharedPtrsInt[i]->print();
                     } else {
-                        std::cout << "\nNo resource managed by SharedPtr\n";
+                        std::cout << "No resource managed by SharedPtr\n";
                     }
                 }
             } else {
-                std::cout << "\nNo SharedPtrs\n";
+                std::cout << "No SharedPtrs\n";
             }
 
-            std::cout << "\nSharedPtrs (string):\n";
+            std::cout << "SharedPtrs (string):\n";
             if (!sharedPtrsString.empty()) {
                 for (size_t i = 0; i < sharedPtrsString.size(); ++i) {
-                    std::cout << "\nSharedPtr " << i << ": ";
+                    std::cout << "SharedPtr " << i << ": ";
                     if (sharedPtrsString[i]) {
                         sharedPtrsString[i]->print();
                     } else {
-                        std::cout << "\nNo resource managed by SharedPtr\n";
+                        std::cout << "No resource managed by SharedPtr\n";
                     }
                 }
             } else {
-                std::cout << "\nNo SharedPtrs\n";
+                std::cout << "No SharedPtrs\n";
             }
 
-            std::cout << "\nSharedPtrs (vector<int>):\n";
+            std::cout << "SharedPtrs (vector<int>):\n";
             if (!sharedPtrsVectorInt.empty()) {
                 for (size_t i = 0; i < sharedPtrsVectorInt.size(); ++i) {
-                    std::cout << "\nSharedPtr " << i << ": ";
+                    std::cout << "SharedPtr " << i << ": ";
                     if (sharedPtrsVectorInt[i]) {
                         sharedPtrsVectorInt[i]->print();
                     } else {
-                        std::cout << "\nNo resource managed by SharedPtr\n";
+                        std::cout << "No resource managed by SharedPtr\n";
                     }
                 }
             } else {
-                std::cout << "\nNo SharedPtrs\n";
+                std::cout << "No SharedPtrs\n";
             }
         } else if (choice == 7) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1 && !sharedPtrsInt.empty()) {
-                std::cout << "\nEnter index of SharedPtr to remove (0-" << sharedPtrsInt.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr to remove (0-" << sharedPtrsInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsInt.size()) {
                     sharedPtrsInt.erase(sharedPtrsInt.begin() + index);
-                    std::cout << "\nSharedPtr removed\n";
+                    std::cout << "SharedPtr removed\n";
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 2 && !sharedPtrsString.empty()) {
-                std::cout << "\nEnter index of SharedPtr to remove (0-" << sharedPtrsString.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr to remove (0-" << sharedPtrsString.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsString.size()) {
                     sharedPtrsString.erase(sharedPtrsString.begin() + index);
-                    std::cout << "\nSharedPtr removed\n";
+                    std::cout << "SharedPtr removed\n";
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else if (type == 3 && !sharedPtrsVectorInt.empty()) {
-                std::cout << "\nEnter index of SharedPtr to remove (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
+                std::cout << "Enter index of SharedPtr to remove (0-" << sharedPtrsVectorInt.size() - 1 << "): ";
                 int index;
                 std::cin >> index;
                 clearInputBuffer();
                 if (index >= 0 && index < sharedPtrsVectorInt.size()) {
                     sharedPtrsVectorInt.erase(sharedPtrsVectorInt.begin() + index);
-                    std::cout << "\nSharedPtr removed\n";
+                    std::cout << "SharedPtr removed\n";
                 } else {
-                    std::cout << "\nInvalid index\n";
+                    std::cout << "Invalid index\n";
                 }
             } else {
-                std::cout << "\nNo SharedPtrs\n";
+                std::cout << "No SharedPtrs\n";
             }
         } else if (choice == 8) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
-            std::cout << "\nEnter number of SharedPtrs to create: ";
+            std::cout << "Enter number of SharedPtrs to create: ";
             std::cin >> count;
             clearInputBuffer();
 
             if (type == 1) {
                 int value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
 
@@ -415,7 +415,7 @@ void sharedPtrMenu() {
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = end - start;
-                std::cout << "\nTime to create " << count << " SharedPtrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " SharedPtrs: " << elapsed.count() << " s\n";
 
                 std::vector<std::shared_ptr<ResourceInt>> stlSharedPtrs;
                 start = std::chrono::high_resolution_clock::now();
@@ -424,10 +424,10 @@ void sharedPtrMenu() {
                 }
                 end = std::chrono::high_resolution_clock::now();
                 elapsed = end - start;
-                std::cout << "\nTime to create " << count << " std::shared_ptrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " std::shared_ptrs: " << elapsed.count() << " s\n";
             } else if (type == 2) {
                 std::string value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
 
@@ -437,7 +437,7 @@ void sharedPtrMenu() {
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = end - start;
-                std::cout << "\nTime to create " << count << " SharedPtrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " SharedPtrs: " << elapsed.count() << " s\n";
 
                 std::vector<std::shared_ptr<ResourceString>> stlSharedPtrs;
                 start = std::chrono::high_resolution_clock::now();
@@ -446,10 +446,10 @@ void sharedPtrMenu() {
                 }
                 end = std::chrono::high_resolution_clock::now();
                 elapsed = end - start;
-                std::cout << "\nTime to create " << count << " std::shared_ptrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " std::shared_ptrs: " << elapsed.count() << " s\n";
             } else if (type == 3) {
                 std::vector<int> value;
-                std::cout << "\nEnter resource value (comma-separated integers): ";
+                std::cout << "Enter resource value (comma-separated integers): ";
                 std::string input;
                 std::cin >> input;
                 clearInputBuffer();
@@ -466,7 +466,7 @@ void sharedPtrMenu() {
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = end - start;
-                std::cout << "\nTime to create " << count << " SharedPtrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " SharedPtrs: " << elapsed.count() << " s\n";
 
                 std::vector<std::shared_ptr<ResourceVectorInt>> stlSharedPtrs;
                 start = std::chrono::high_resolution_clock::now();
@@ -475,19 +475,19 @@ void sharedPtrMenu() {
                 }
                 end = std::chrono::high_resolution_clock::now();
                 elapsed = end - start;
-                std::cout << "\nTime to create " << count << " std::shared_ptrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " std::shared_ptrs: " << elapsed.count() << " s\n";
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 9) {
             sharedPtrsInt.resize(originalSizeInt);
             sharedPtrsString.resize(originalSizeString);
             sharedPtrsVectorInt.resize(originalSizeVectorInt);
-            std::cout << "\nCreated SharedPtrs removed\n";
+            std::cout << "Created SharedPtrs removed\n";
         } else if (choice == 10) {
             break;
         } else {
-            std::cout << "\nInvalid choice\n";
+            std::cout << "Invalid choice\n";
         }
     }
 }
@@ -505,43 +505,43 @@ void weakPtrMenu() {
 
     while (true) {
         std::cout << "\nWeakPtr Menu:\n";
-        std::cout << "\n1.  ➤   Create SharedPtr\n";
-        std::cout << "\n2.  ➤   Create WeakPtr from SharedPtr\n";
-        std::cout << "\n3.  ➤   Lock WeakPtr\n";
-        std::cout << "\n4.  ➤   Use Count\n";
-        std::cout << "\n5.  ➤   Expired\n";
-        std::cout << "\n6.  ➤   Create Multiple WeakPtrs\n";
-        std::cout << "\n7.  ➤   Back to Main Menu\n";
-        std::cout << "\nEnter your choice: ";
+        std::cout << "1. ➤ Create SharedPtr\n";
+        std::cout << "2. ➤ Create WeakPtr from SharedPtr\n";
+        std::cout << "3. ➤ Lock WeakPtr\n";
+        std::cout << "4. ➤ Use Count\n";
+        std::cout << "5. ➤ Expired\n";
+        std::cout << "6. ➤ Create Multiple WeakPtrs\n";
+        std::cout << "7. ➤ Back to Main Menu\n";
+        std::cout << "Enter your choice: ";
 
         int choice;
         std::cin >> choice;
         clearInputBuffer();
 
         if (choice == 1) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
-            std::cout << "\nEnter resource name: ";
+            std::cout << "Enter resource name: ";
             std::cin >> name;
             clearInputBuffer();
 
             if (type == 1) {
                 int value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
                 sharedPtrInt.reset(new ResourceInt(name, value));
             } else if (type == 2) {
                 std::string value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
                 sharedPtrString.reset(new ResourceString(name, value));
             } else if (type == 3) {
                 std::vector<int> value;
-                std::cout << "\nEnter resource value (comma-separated integers): ";
+                std::cout << "Enter resource value (comma-separated integers): ";
                 std::string input;
                 std::cin >> input;
                 clearInputBuffer();
@@ -553,27 +553,27 @@ void weakPtrMenu() {
                 }
                 sharedPtrVectorInt.reset(new ResourceVectorInt(name, value));
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 2) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1 && sharedPtrInt) {
                 weakPtrInt = sharedPtrInt;
-                std::cout << "\nWeakPtr created from SharedPtr\n";
+                std::cout << "WeakPtr created from SharedPtr\n";
             } else if (type == 2 && sharedPtrString) {
                 weakPtrString = sharedPtrString;
-                std::cout << "\nWeakPtr created from SharedPtr\n";
+                std::cout << "WeakPtr created from SharedPtr\n";
             } else if (type == 3 && sharedPtrVectorInt) {
                 weakPtrVectorInt = sharedPtrVectorInt;
-                std::cout << "\nWeakPtr created from SharedPtr\n";
+                std::cout << "WeakPtr created from SharedPtr\n";
             } else {
-                std::cout << "\nNo resource managed by SharedPtr\n";
+                std::cout << "No resource managed by SharedPtr\n";
             }
         } else if (choice == 3) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
@@ -582,59 +582,59 @@ void weakPtrMenu() {
                 if (lockedPtr) {
                     lockedPtr->print();
                 } else {
-                    std::cout << "\nWeakPtr expired\n";
+                    std::cout << "WeakPtr expired\n";
                 }
             } else if (type == 2) {
                 SharedPtr<ResourceString> lockedPtr = weakPtrString.lock();
                 if (lockedPtr) {
                     lockedPtr->print();
                 } else {
-                    std::cout << "\nWeakPtr expired\n";
+                    std::cout << "WeakPtr expired\n";
                 }
             } else if (type == 3) {
                 SharedPtr<ResourceVectorInt> lockedPtr = weakPtrVectorInt.lock();
                 if (lockedPtr) {
                     lockedPtr->print();
                 } else {
-                    std::cout << "\nWeakPtr expired\n";
+                    std::cout << "WeakPtr expired\n";
                 }
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 4) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1) {
-                std::cout << "\nUse count: " << weakPtrInt.use_count() << std::endl;
+                std::cout << "Use count: " << weakPtrInt.use_count() << std::endl;
             } else if (type == 2) {
-                std::cout << "\nUse count: " << weakPtrString.use_count() << std::endl;
+                std::cout << "Use count: " << weakPtrString.use_count() << std::endl;
             } else if (type == 3) {
-                std::cout << "\nUse count: " << weakPtrVectorInt.use_count() << std::endl;
+                std::cout << "Use count: " << weakPtrVectorInt.use_count() << std::endl;
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 5) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1) {
-                std::cout << "\nExpired: " << (weakPtrInt.expired() ? "Yes" : "No") << std::endl;
+                std::cout << "Expired: " << (weakPtrInt.expired() ? "Yes" : "No") << std::endl;
             } else if (type == 2) {
-                std::cout << "\nExpired: " << (weakPtrString.expired() ? "Yes" : "No") << std::endl;
+                std::cout << "Expired: " << (weakPtrString.expired() ? "Yes" : "No") << std::endl;
             } else if (type == 3) {
-                std::cout << "\nExpired: " << (weakPtrVectorInt.expired() ? "Yes" : "No") << std::endl;
+                std::cout << "Expired: " << (weakPtrVectorInt.expired() ? "Yes" : "No") << std::endl;
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 6) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
-            std::cout << "\nEnter number of WeakPtrs to create: ";
+            std::cout << "Enter number of WeakPtrs to create: ";
             std::cin >> count;
             clearInputBuffer();
 
@@ -645,7 +645,7 @@ void weakPtrMenu() {
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = end - start;
-                std::cout << "\nTime to create " << count << " WeakPtrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " WeakPtrs: " << elapsed.count() << " s\n";
 
                 std::weak_ptr<ResourceInt> stlWeakPtr;
                 start = std::chrono::high_resolution_clock::now();
@@ -654,7 +654,7 @@ void weakPtrMenu() {
                 }
                 end = std::chrono::high_resolution_clock::now();
                 elapsed = end - start;
-                std::cout << "\nTime to create " << count << " std::weak_ptrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " std::weak_ptrs: " << elapsed.count() << " s\n";
             } else if (type == 2) {
                 auto start = std::chrono::high_resolution_clock::now();
                 for (int i = 0; i < count; ++i) {
@@ -662,7 +662,7 @@ void weakPtrMenu() {
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = end - start;
-                std::cout << "\nTime to create " << count << " WeakPtrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " WeakPtrs: " << elapsed.count() << " s\n";
 
                 std::weak_ptr<ResourceString> stlWeakPtr;
                 start = std::chrono::high_resolution_clock::now();
@@ -671,7 +671,7 @@ void weakPtrMenu() {
                 }
                 end = std::chrono::high_resolution_clock::now();
                 elapsed = end - start;
-                std::cout << "\nTime to create " << count << " std::weak_ptrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " std::weak_ptrs: " << elapsed.count() << " s\n";
             } else if (type == 3) {
                 auto start = std::chrono::high_resolution_clock::now();
                 for (int i = 0; i < count; ++i) {
@@ -679,7 +679,7 @@ void weakPtrMenu() {
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = end - start;
-                std::cout << "\nTime to create " << count << " WeakPtrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " WeakPtrs: " << elapsed.count() << " s\n";
 
                 std::weak_ptr<ResourceVectorInt> stlWeakPtr;
                 start = std::chrono::high_resolution_clock::now();
@@ -688,14 +688,14 @@ void weakPtrMenu() {
                 }
                 end = std::chrono::high_resolution_clock::now();
                 elapsed = end - start;
-                std::cout << "\nTime to create " << count << " std::weak_ptrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " std::weak_ptrs: " << elapsed.count() << " s\n";
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 7) {
             break;
         } else {
-            std::cout << "\nInvalid choice\n";
+            std::cout << "Invalid choice\n";
         }
     }
 }
@@ -710,42 +710,42 @@ void uniquePtrMenu() {
 
     while (true) {
         std::cout << "\nUniquePtr Menu:\n";
-        std::cout << "\n1.  ➤   Create UniquePtr\n";
-        std::cout << "\n2.  ➤   Get Resource\n";
-        std::cout << "\n3.  ➤   Release\n";
-        std::cout << "\n4.  ➤   Reset\n";
-        std::cout << "\n5.  ➤   Create Multiple UniquePtrs\n";
-        std::cout << "\n6.  ➤   Back to Main Menu\n";
-        std::cout << "\nEnter your choice: ";
+        std::cout << "1. ➤ Create UniquePtr\n";
+        std::cout << "2. ➤ Get Resource\n";
+        std::cout << "3. ➤ Release\n";
+        std::cout << "4. ➤ Reset\n";
+        std::cout << "5. ➤ Create Multiple UniquePtrs\n";
+        std::cout << "6. ➤ Back to Main Menu\n";
+        std::cout << "Enter your choice: ";
 
         int choice;
         std::cin >> choice;
         clearInputBuffer();
 
         if (choice == 1) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
-            std::cout << "\nEnter resource name: ";
+            std::cout << "Enter resource name: ";
             std::cin >> name;
             clearInputBuffer();
 
             if (type == 1) {
                 int value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
                 uniquePtrInt.reset(new ResourceInt(name, value));
             } else if (type == 2) {
                 std::string value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
                 uniquePtrString.reset(new ResourceString(name, value));
             } else if (type == 3) {
                 std::vector<int> value;
-                std::cout << "\nEnter resource value (comma-separated integers): ";
+                std::cout << "Enter resource value (comma-separated integers): ";
                 std::string input;
                 std::cin >> input;
                 clearInputBuffer();
@@ -757,10 +757,10 @@ void uniquePtrMenu() {
                 }
                 uniquePtrVectorInt.reset(new ResourceVectorInt(name, value));
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 2) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
@@ -771,66 +771,66 @@ void uniquePtrMenu() {
             } else if (type == 3 && uniquePtrVectorInt.get()) {
                 uniquePtrVectorInt->print();
             } else {
-                std::cout << "\nNo resource managed by UniquePtr\n";
+                std::cout << "No resource managed by UniquePtr\n";
             }
         } else if (choice == 3) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1) {
                 ResourceInt* ptr = uniquePtrInt.release();
                 if (ptr) {
-                    std::cout << "\nResource released\n";
+                    std::cout << "Resource released\n";
                 } else {
-                    std::cout << "\nNo resource managed by UniquePtr\n";
+                    std::cout << "No resource managed by UniquePtr\n";
                 }
             } else if (type == 2) {
                 ResourceString* ptr = uniquePtrString.release();
                 if (ptr) {
-                    std::cout << "\nResource released\n";
+                    std::cout << "Resource released\n";
                 } else {
-                    std::cout << "\nNo resource managed by UniquePtr\n";
+                    std::cout << "No resource managed by UniquePtr\n";
                 }
             } else if (type == 3) {
                 ResourceVectorInt* ptr = uniquePtrVectorInt.release();
                 if (ptr) {
-                    std::cout << "\nResource released\n";
+                    std::cout << "Resource released\n";
                 } else {
-                    std::cout << "\nNo resource managed by UniquePtr\n";
+                    std::cout << "No resource managed by UniquePtr\n";
                 }
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 4) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
             if (type == 1) {
                 uniquePtrInt.reset();
-                std::cout << "\nUniquePtr reset\n";
+                std::cout << "UniquePtr reset\n";
             } else if (type == 2) {
                 uniquePtrString.reset();
-                std::cout << "\nUniquePtr reset\n";
+                std::cout << "UniquePtr reset\n";
             } else if (type == 3) {
                 uniquePtrVectorInt.reset();
-                std::cout << "\nUniquePtr reset\n";
+                std::cout << "UniquePtr reset\n";
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 5) {
-            std::cout << "\nEnter resource type (1 - int, 2 - string, 3 - vector<int>): ";
+            std::cout << "Enter resource type (1 - int, 2 - string, 3 - vector<int>): ";
             std::cin >> type;
             clearInputBuffer();
 
-            std::cout << "\nEnter number of UniquePtrs to create: ";
+            std::cout << "Enter number of UniquePtrs to create: ";
             std::cin >> count;
             clearInputBuffer();
 
             if (type == 1) {
                 int value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
 
@@ -840,7 +840,7 @@ void uniquePtrMenu() {
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = end - start;
-                std::cout << "\nTime to create " << count << " UniquePtrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " UniquePtrs: " << elapsed.count() << " s\n";
 
                 std::vector<std::unique_ptr<ResourceInt>> stlUniquePtrs;
                 start = std::chrono::high_resolution_clock::now();
@@ -849,10 +849,10 @@ void uniquePtrMenu() {
                 }
                 end = std::chrono::high_resolution_clock::now();
                 elapsed = end - start;
-                std::cout << "\nTime to create " << count << " std::unique_ptrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " std::unique_ptrs: " << elapsed.count() << " s\n";
             } else if (type == 2) {
                 std::string value;
-                std::cout << "\nEnter resource value: ";
+                std::cout << "Enter resource value: ";
                 std::cin >> value;
                 clearInputBuffer();
 
@@ -862,7 +862,7 @@ void uniquePtrMenu() {
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = end - start;
-                std::cout << "\nTime to create " << count << " UniquePtrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " UniquePtrs: " << elapsed.count() << " s\n";
 
                 std::vector<std::unique_ptr<ResourceString>> stlUniquePtrs;
                 start = std::chrono::high_resolution_clock::now();
@@ -871,10 +871,10 @@ void uniquePtrMenu() {
                 }
                 end = std::chrono::high_resolution_clock::now();
                 elapsed = end - start;
-                std::cout << "\nTime to create " << count << " std::unique_ptrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " std::unique_ptrs: " << elapsed.count() << " s\n";
             } else if (type == 3) {
                 std::vector<int> value;
-                std::cout << "\nEnter resource value (comma-separated integers): ";
+                std::cout << "Enter resource value (comma-separated integers): ";
                 std::string input;
                 std::cin >> input;
                 clearInputBuffer();
@@ -891,7 +891,7 @@ void uniquePtrMenu() {
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = end - start;
-                std::cout << "\nTime to create " << count << " UniquePtrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " UniquePtrs: " << elapsed.count() << " s\n";
 
                 std::vector<std::unique_ptr<ResourceVectorInt>> stlUniquePtrs;
                 start = std::chrono::high_resolution_clock::now();
@@ -900,14 +900,14 @@ void uniquePtrMenu() {
                 }
                 end = std::chrono::high_resolution_clock::now();
                 elapsed = end - start;
-                std::cout << "\nTime to create " << count << " std::unique_ptrs: " << elapsed.count() << " s\n";
+                std::cout << "Time to create " << count << " std::unique_ptrs: " << elapsed.count() << " s\n";
             } else {
-                std::cout << "\nInvalid type\n";
+                std::cout << "Invalid type\n";
             }
         } else if (choice == 6) {
             break;
         } else {
-            std::cout << "\nInvalid choice\n";
+            std::cout << "Invalid choice\n";
         }
     }
 }
@@ -915,11 +915,11 @@ void uniquePtrMenu() {
 int main() {
     while (true) {
         std::cout << "\nMain Menu:\n";
-        std::cout << "\n1.  ➤   SharedPtr Menu\n";
-        std::cout << "\n2.  ➤   WeakPtr Menu\n";
-        std::cout << "\n3.  ➤   UniquePtr Menu\n";
-        std::cout << "\n4.  ➤   Exit\n";
-        std::cout << "\nEnter your choice: ";
+        std::cout << "1. ➤ SharedPtr Menu\n";
+        std::cout << "2. ➤ WeakPtr Menu\n";
+        std::cout << "3. ➤ UniquePtr Menu\n";
+        std::cout << "4. ➤ Exit\n";
+        std::cout << "Enter your choice: ";
 
         int choice;
         std::cin >> choice;
@@ -934,7 +934,7 @@ int main() {
         } else if (choice == 4) {
             break;
         } else {
-            std::cout << "\nInvalid choice\n";
+            std::cout << "Invalid choice\n";
         }
     }
 

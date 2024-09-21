@@ -1,1 +1,0 @@
-/usr/bin/c++  -g CMakeFiles/shared_tests.dir/tests/SharedTests.cpp.o -o shared_tests  /usr/lib/libgtest.so.1.15.2

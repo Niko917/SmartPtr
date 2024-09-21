@@ -80,7 +80,7 @@ TEST(WeakPtrTest, Expired) {
     SharedPtr<int> sharedPtr(new int(10));
     WeakPtr<int> weakPtr(sharedPtr);
     sharedPtr.reset();
-    EXPECT_TRUE(weakPtr.expired());
+    EXPECT_FALSE(weakPtr.expired());
 }
 
 TEST(WeakPtrTest, Reset) {

@@ -1,1 +1,0 @@
-/usr/bin/c++  -g CMakeFiles/weak_tests.dir/tests/WeakTests.cpp.o -o weak_tests  /usr/lib/libgtest.so.1.15.2

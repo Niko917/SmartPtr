@@ -1,24 +1,19 @@
 #pragma once
-#include <iostream>
-#include <memory>
+#include <stdexcept>
 #include <type_traits>
-#include <concepts>
 
 
-template <typename T, typename Deleter = std::default_delete<T>>
+template <typename T>
 class UniquePtr {
 private:
-    T* ptr;
-    Deleter del; // functional object
+    T* ptr_;
     
 public:
-    UniquePtr(T* ptr = nullptr) : ptr(ptr) {}
-
-    UniquePtr(T* ptr, Deleter del) : ptr(ptr), del(std::move(del)) {}
+    UniquePtr(T* ptr_ = nullptr) : ptr_(ptr_) {}
 
     ~UniquePtr() {
-        if (ptr) {
-            del(ptr);
+        if (ptr_) {
+            delete(ptr_);
         }
     }
 
@@ -27,65 +22,62 @@ public:
 
     // SFINAE
     template <typename U, typename = std::enable_if_t<std::is_convertible_v<U*, T*>>>
-    UniquePtr(UniquePtr<U, Deleter>&& other_ptr) noexcept : ptr(other_ptr.release()), del(std::move(other_ptr.del)) {
-        other_ptr.ptr = nullptr;
+    UniquePtr(UniquePtr<U>&& other_ptr_) noexcept : ptr_(other_ptr_.release()) {
+        other_ptr_.ptr_ = nullptr;
     }
 
-    UniquePtr& operator=(UniquePtr&& other_ptr) noexcept {
-        if (this != &other_ptr) {
-            reset(other_ptr.release());
-            del = std::move(other_ptr.del);
+    UniquePtr& operator=(UniquePtr&& other_ptr_) noexcept {
+        if (this != &other_ptr_) {
+            reset(other_ptr_.release());
         }
         return *this;
     }
 
-    T& operator*() const { return *ptr; }
+    T& operator*() const { 
+        if (this == nullptr) {
+            throw std::runtime_error("Dereferencing a nullptr");
+        }
+        return *ptr_; 
+    }
     
-    T* operator->() const noexcept { return ptr; }
+    T* operator->() const noexcept { return ptr_; }
     
-    T* get() const { return ptr; }
+    T* get() const { return ptr_; }
 
     T* release() noexcept {
-        T* tmp = ptr;
-        ptr = nullptr;
+        T* tmp = ptr_;
+        ptr_ = nullptr;
         return tmp;
     }
 
-    void reset(T* new_ptr = nullptr) noexcept {
-        if (ptr) {
-            del(ptr);
+    void reset(T* new_ptr_ = nullptr) noexcept {
+        if (ptr_) {
+            delete(ptr_);
         }
-        ptr = new_ptr;
+        ptr_ = new_ptr_;
     }
 
     bool operator==(const UniquePtr& other) const noexcept {
-        return ptr == other.ptr;
+        return ptr_ == other.ptr_;
     }
 
     bool operator!=(const UniquePtr& other) const noexcept {
-        return ptr != other.ptr;
+        return ptr_ != other.ptr_;
     }
 
     // Friend declaration to allow access to private members
-    template <typename U, typename D>
+    template <typename U>
     friend class UniquePtr;
 };
 
-// Implementation of make_unique for simple types
-template <typename T, typename Deleter = std::default_delete<T>>
-UniquePtr<T, Deleter> make_unique(Deleter del = Deleter()) {
-    return UniquePtr<T, Deleter>(new T(), std::move(del));
-}
-
 // Implementation of make_unique for types with constructor parameters
-template <typename T, typename Deleter = std::default_delete<T>, typename... Args>
-UniquePtr<T, Deleter> make_unique(Deleter del, Args&&... args) {
-    return UniquePtr<T, Deleter>(new T(std::forward<Args>(args)...), std::move(del));
+template <typename T, typename... Args>
+UniquePtr<T> make_unique(Args&&... args) {
+    return UniquePtr<T>(new T(std::forward<Args>(args)...));
 }
 
 // Implementation of make_unique for arrays
-template <typename T, typename Deleter = std::default_delete<T[]>>
-UniquePtr<T[], Deleter> make_unique_array(std::size_t size, Deleter del = Deleter()) {
-    return UniquePtr<T[], Deleter>(new T[size](), std::move(del));
+template <typename T>
+UniquePtr<T[]> make_unique_array(std::size_t size) {
+    return UniquePtr<T[]>(new T[size]());
 }
-

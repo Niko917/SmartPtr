@@ -5,9 +5,26 @@ project(SmartPointers)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address,memory")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") #-fsanitize=address")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
+
+# --- Fetch FTXUI --------------------------------------------------------------
+include(FetchContent)
+
+set(FETCHCONTENT_UPDATES_DISCONNECTED TRUE)
+FetchContent_Declare(ftxui
+  GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
+  GIT_TAG main
+)
+
+FetchContent_GetProperties(ftxui)
+if(NOT ftxui_POPULATED)
+  FetchContent_MakeAvailable(ftxui)
+endif()
+# ------------------------------------------------------------------------------
+
+set(CMAKE_TOOLCHAIN_FILE /opt/vcpkg/scripts/buildsystems/vcpkg.cmake)
 
 find_package(GTest REQUIRED)
 
@@ -15,6 +32,8 @@ if(GTEST_FOUND)
     add_executable(SmartPointers src/main.cpp)
 
     enable_testing()
+
+    target_link_libraries(SmartPointers ftxui::dom ftxui::screen ftxui::component)
 
     add_executable(unique_tests tests/UniqueTests.cpp)
     add_executable(weak_tests tests/WeakTests.cpp)

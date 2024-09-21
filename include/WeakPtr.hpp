@@ -67,7 +67,7 @@ public:
     }
 
     SharedPtr<T> lock() const noexcept {
-        if (RefCounter && RefCounter->SharedCount() > 0) {
+        if (RefCounter && RefCounter->SharedCount() > 0) { 
             return SharedPtr<T>(*this);
         }
         return SharedPtr<T>();

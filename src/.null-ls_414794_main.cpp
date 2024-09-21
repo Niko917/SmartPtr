@@ -1,11 +1,7 @@
-#include <ftxui/component/component_base.hpp>
-#include <ftxui/component/component_options.hpp>
 #include <ftxui/dom/elements.hpp>
 #include <ftxui/screen/screen.hpp>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/component/event.hpp>
-#include <ftxui/dom/elements.hpp>
 #include <memory>
 #include <vector>
 #include <string>
@@ -35,21 +31,18 @@ private:
     int value_;
 };
 
-std::vector<SharedPtr<Resource>> sharedPtrs;
-
 void sharedPtrMenu() {
+    SharedPtr<Resource> sharedPtr;
     std::string name;
     int value;
 
     while (true) {
         std::cout << "\nSharedPtr Menu:\n";
         std::cout << "1. Create SharedPtr\n";
-        std::cout << "2. Create SharedPtr to Existing Resource\n";
-        std::cout << "3. Get Resource\n";
-        std::cout << "4. Use Count\n";
-        std::cout << "5. Reset\n";
-        std::cout << "6. List All SharedPtrs\n";
-        std::cout << "7. Back to Main Menu\n";
+        std::cout << "2. Get Resource\n";
+        std::cout << "3. Use Count\n";
+        std::cout << "4. Reset\n";
+        std::cout << "5. Back to Main Menu\n";
         std::cout << "Enter your choice: ";
 
         int choice;
@@ -60,80 +53,19 @@ void sharedPtrMenu() {
             std::cin >> name;
             std::cout << "Enter resource value: ";
             std::cin >> value;
-            sharedPtrs.push_back(SharedPtr<Resource>(new Resource(name, value)));
+            sharedPtr.reset(new Resource(name, value));
         } else if (choice == 2) {
-            if (!sharedPtrs.empty()) {
-                std::cout << "Enter index of existing SharedPtr (0-" << sharedPtrs.size() - 1 << "): ";
-                int index;
-                std::cin >> index;
-                if (index >= 0 && index < sharedPtrs.size()) {
-                    sharedPtrs.push_back(sharedPtrs[index]);
-                    std::cout << "SharedPtr created to existing resource\n";
-                } else {
-                    std::cout << "Invalid index\n";
-                }
+            if (sharedPtr) {
+                sharedPtr->print();
             } else {
-                std::cout << "No existing SharedPtrs\n";
+                std::cout << "No resource managed by SharedPtr\n";
             }
         } else if (choice == 3) {
-            if (!sharedPtrs.empty()) {
-                std::cout << "Enter index of SharedPtr (0-" << sharedPtrs.size() - 1 << "): ";
-                int index;
-                std::cin >> index;
-                if (index >= 0 && index < sharedPtrs.size()) {
-                    if (sharedPtrs[index]) {
-                        sharedPtrs[index]->print();
-                    } else {
-                        std::cout << "No resource managed by SharedPtr\n";
-                    }
-                } else {
-                    std::cout << "Invalid index\n";
-                }
-            } else {
-                std::cout << "No SharedPtrs\n";
-            }
+            std::cout << "Use count: " << sharedPtr.use_count() << std::endl;
         } else if (choice == 4) {
-            if (!sharedPtrs.empty()) {
-                std::cout << "Enter index of SharedPtr (0-" << sharedPtrs.size() - 1 << "): ";
-                int index;
-                std::cin >> index;
-                if (index >= 0 && index < sharedPtrs.size()) {
-                    std::cout << "Use count: " << sharedPtrs[index].use_count() << std::endl;
-                } else {
-                    std::cout << "Invalid index\n";
-                }
-            } else {
-                std::cout << "No SharedPtrs\n";
-            }
+            sharedPtr.reset();
+            std::cout << "SharedPtr reset\n";
         } else if (choice == 5) {
-            if (!sharedPtrs.empty()) {
-                std::cout << "Enter index of SharedPtr to reset (0-" << sharedPtrs.size() - 1 << "): ";
-                int index;
-                std::cin >> index;
-                if (index >= 0 && index < sharedPtrs.size()) {
-                    sharedPtrs[index].reset();
-                    std::cout << "SharedPtr reset\n";
-                } else {
-                    std::cout << "Invalid index\n";
-                }
-            } else {
-                std::cout << "No SharedPtrs\n";
-            }
-        } else if (choice == 6) {
-            if (!sharedPtrs.empty()) {
-                for (size_t i = 0; i < sharedPtrs.size(); ++i) {
-
-                    std::cout << "SharedPtr " << i << ": ";
-                    if (sharedPtrs[i]) {
-                        sharedPtrs[i]->print();
-                    } else {
-                        std::cout << "No resource managed by SharedPtr\n";
-                    }
-                }
-            } else {
-                std::cout << "No SharedPtrs\n";
-            }
-        } else if (choice == 7) {
             break;
         } else {
             std::cout << "Invalid choice\n";

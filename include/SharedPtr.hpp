@@ -8,17 +8,16 @@
 template <typename T>
 class WeakPtr;
 
-template <typename T, typename Deleter = std::default_delete<T>>
+template <typename T>
 class SharedPtr { 
 private:
     T* ptr_;
     ControlBlock* RefCounter;
-    Deleter deleter;
 
 public:
-    constexpr SharedPtr() noexcept : ptr_(nullptr), RefCounter(new ControlBlock(false)), deleter() {}
+    constexpr SharedPtr() noexcept : ptr_(nullptr), RefCounter(new ControlBlock(false)) {}
     
-    explicit SharedPtr(T* ptr) : ptr_(ptr), RefCounter(new ControlBlock(true)), deleter() {}
+    explicit SharedPtr(T* ptr) : ptr_(ptr), RefCounter(new ControlBlock(true)) {}
     
     SharedPtr(T* ptr, ControlBlock* rc) : ptr_(ptr), RefCounter(std::move(rc)) {
         if (RefCounter) {
@@ -26,13 +25,13 @@ public:
         }
     }
 
-    SharedPtr(const SharedPtr& other) : ptr_(other.get()), RefCounter(other.RefCounter), deleter(other.deleter) {
+    SharedPtr(const SharedPtr& other) : ptr_(other.get()), RefCounter(other.RefCounter) {
         if (RefCounter) {
             RefCounter->IncrementShared();
         }
     }
 
-    SharedPtr(SharedPtr&& other) noexcept : ptr_(other.get()), RefCounter(other.RefCounter), deleter(std::move(other.deleter)) {
+    SharedPtr(SharedPtr&& other) noexcept : ptr_(other.get()), RefCounter(other.RefCounter) {
         other.ptr_ = nullptr;
         other.RefCounter = nullptr;
     }
@@ -69,7 +68,6 @@ public:
             release();
             ptr_ = other.ptr_;
             RefCounter = other.RefCounter;
-            deleter = std::move(other.deleter);
             other.ptr_ = nullptr;
             other.RefCounter = nullptr;
         }
@@ -123,7 +121,7 @@ private:
         if (RefCounter) {
             RefCounter->DecrementShared();
             if (RefCounter->SharedCount() == 0) {
-                deleter(ptr_);
+                delete ptr_;
                 if (RefCounter->WeakCount() == 0) {
                     delete RefCounter;
                 }

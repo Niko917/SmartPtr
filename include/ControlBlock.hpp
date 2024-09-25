@@ -3,7 +3,6 @@
 
 
 class ControlBlock {
-
 private:
     size_t shared_counter_;
     size_t weak_counter_;

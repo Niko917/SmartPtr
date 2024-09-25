@@ -2,18 +2,17 @@
 #include <stdexcept>
 #include <type_traits>
 
-
 template <typename T>
 class UniquePtr {
 private:
     T* ptr_;
     
 public:
-    UniquePtr(T* ptr_ = nullptr) : ptr_(ptr_) {}
+    UniquePtr(T* ptr = nullptr) : ptr_(ptr) {}
 
     ~UniquePtr() {
         if (ptr_) {
-            delete(ptr_);
+            delete ptr_;
         }
     }
 
@@ -22,19 +21,19 @@ public:
 
     // SFINAE
     template <typename U, typename = std::enable_if_t<std::is_convertible_v<U*, T*>>>
-    UniquePtr(UniquePtr<U>&& other_ptr_) noexcept : ptr_(other_ptr_.release()) {
-        other_ptr_.ptr_ = nullptr;
+    UniquePtr(UniquePtr<U>&& other_ptr) noexcept : ptr_(other_ptr.release()) {
+        other_ptr.ptr_ = nullptr;
     }
 
-    UniquePtr& operator=(UniquePtr&& other_ptr_) noexcept {
-        if (this != &other_ptr_) {
-            reset(other_ptr_.release());
+    UniquePtr& operator=(UniquePtr&& other_ptr) noexcept {
+        if (this != &other_ptr) {
+            reset(other_ptr.release());
         }
         return *this;
     }
 
     T& operator*() const { 
-        if (this == nullptr) {
+        if (ptr_ == nullptr) {
             throw std::runtime_error("Dereferencing a nullptr");
         }
         return *ptr_; 
@@ -50,11 +49,11 @@ public:
         return tmp;
     }
 
-    void reset(T* new_ptr_ = nullptr) noexcept {
+    void reset(T* new_ptr = nullptr) noexcept {
         if (ptr_) {
-            delete(ptr_);
+            delete ptr_;
         }
-        ptr_ = new_ptr_;
+        ptr_ = new_ptr;
     }
 
     bool operator==(const UniquePtr& other) const noexcept {
@@ -81,3 +80,4 @@ template <typename T>
 UniquePtr<T[]> make_unique_array(std::size_t size) {
     return UniquePtr<T[]>(new T[size]());
 }
+

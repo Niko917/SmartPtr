@@ -49,7 +49,7 @@ private:
 };
 
 template<typename T>
-class SmartPointerManagerBase {
+class SmartPointerManager {
 public:
     using SharedPtrVector = std::vector<SharedPtr<Resource<T>>>;
     using UniquePtrVector = std::vector<UniquePtr<Resource<T>>>;
@@ -397,12 +397,15 @@ public:
         }
     }
 
+private:
+    SharedPtrVector sharedPtrs;
+    UniquePtrVector uniquePtrs;
+    WeakPtrVector weakPtrs;
+
     void clearInputBuffer() {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
-
-    SharedPtrVector sharedPtrs;
 
     template<typename U>
     U createResourceValue() {
@@ -428,10 +431,6 @@ public:
         }
     }
 
-private:
-    UniquePtrVector uniquePtrs;
-    WeakPtrVector weakPtrs;
-
     void printResource(const SharedPtr<Resource<T>>& ptr) {
         if (ptr) {
             ptr->print();
@@ -441,28 +440,13 @@ private:
     }
 };
 
-
-
-
-template<typename T>
-class SmartPointerManager : public SmartPointerManagerBase<T> {};
-
-class SmartPointerManagerInt : public SmartPointerManager<int> {};
-class SmartPointerManagerString : public SmartPointerManager<std::string> {};
-class SmartPointerManagerVectorInt : public SmartPointerManager<std::vector<int>> {};
-class SmartPointerManagerChar : public SmartPointerManager<char> {};
-class SmartPointerManagerBool : public SmartPointerManager<bool> {};
-class SmartPointerManagerDouble : public SmartPointerManager<double> {};
-
-
-
 void sharedPtrMenu() {
-    SmartPointerManagerInt managerInt;
-    SmartPointerManagerString managerString;
-    SmartPointerManagerVectorInt managerVectorInt;
-    SmartPointerManagerChar managerChar;
-    SmartPointerManagerBool managerBool;
-    SmartPointerManagerDouble managerDouble;
+    SmartPointerManager<int> managerInt;
+    SmartPointerManager<std::string> managerString;
+    SmartPointerManager<std::vector<int>> managerVectorInt;
+    SmartPointerManager<char> managerChar;
+    SmartPointerManager<bool> managerBool;
+    SmartPointerManager<double> managerDouble;
 
     size_t originalSizeInt = managerInt.getSharedPtrsSize();
     size_t originalSizeString = managerString.getSharedPtrsSize();
@@ -675,12 +659,12 @@ void sharedPtrMenu() {
 }
 
 void uniquePtrMenu() {
-    SmartPointerManagerInt managerInt;
-    SmartPointerManagerString managerString;
-    SmartPointerManagerVectorInt managerVectorInt;
-    SmartPointerManagerChar managerChar;
-    SmartPointerManagerBool managerBool;
-    SmartPointerManagerDouble managerDouble;
+    SmartPointerManager<int> managerInt;
+    SmartPointerManager<std::string> managerString;
+    SmartPointerManager<std::vector<int>> managerVectorInt;
+    SmartPointerManager<char> managerChar;
+    SmartPointerManager<bool> managerBool;
+    SmartPointerManager<double> managerDouble;
 
     while (true) {
         std::cout << "\nUniquePtr Menu:\n";
@@ -815,12 +799,12 @@ void uniquePtrMenu() {
 }
 
 void weakPtrMenu() {
-    SmartPointerManagerInt managerInt;
-    SmartPointerManagerString managerString;
-    SmartPointerManagerVectorInt managerVectorInt;
-    SmartPointerManagerChar managerChar;
-    SmartPointerManagerBool managerBool;
-    SmartPointerManagerDouble managerDouble;
+    SmartPointerManager<int> managerInt;
+    SmartPointerManager<std::string> managerString;
+    SmartPointerManager<std::vector<int>> managerVectorInt;
+    SmartPointerManager<char> managerChar;
+    SmartPointerManager<bool> managerBool;
+    SmartPointerManager<double> managerDouble;
 
     while (true) {
         std::cout << "\nWeakPtr Menu:\n";
@@ -987,8 +971,6 @@ void weakPtrMenu() {
     }
 }
 
-
-
 int main() {
     while (true) {
         std::cout << "\nMain Menu:\n";
@@ -1000,7 +982,6 @@ int main() {
 
         int choice;
         std::cin >> choice;
-        SmartPointerManager<int> managerInt; // Создаем экземпляр для очистки буфера ввода
         managerInt.clearInputBuffer();
 
         if (choice == 1) {

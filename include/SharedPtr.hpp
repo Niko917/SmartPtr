@@ -12,28 +12,28 @@ template <typename T>
 class SharedPtr { 
 private:
     T* ptr_;
-    ControlBlock* RefCounter;
+    ControlBlock* ref_counter_;
 
 public:
-    constexpr SharedPtr() noexcept : ptr_(nullptr), RefCounter(new ControlBlock(false)) {}
+    constexpr SharedPtr() noexcept : ptr_(nullptr), ref_counter_(new ControlBlock(false)) {}
     
-    explicit SharedPtr(T* ptr) : ptr_(ptr), RefCounter(new ControlBlock(true)) {}
+    explicit SharedPtr(T* ptr) : ptr_(ptr), ref_counter_(new ControlBlock(true)) {}
     
-    SharedPtr(T* ptr, ControlBlock* rc) : ptr_(ptr), RefCounter(std::move(rc)) {
-        if (RefCounter) {
-            RefCounter->IncrementShared();
+    SharedPtr(T* ptr, ControlBlock* rc) : ptr_(ptr), ref_counter_(std::move(rc)) {
+        if (ref_counter_) {
+            ref_counter_->IncrementShared();
         }
     }
 
-    SharedPtr(const SharedPtr& other) : ptr_(other.get()), RefCounter(other.RefCounter) {
-        if (RefCounter) {
-            RefCounter->IncrementShared();
+    SharedPtr(const SharedPtr& other) : ptr_(other.get()), ref_counter_(other.ref_counter_) {
+        if (ref_counter_) {
+            ref_counter_->IncrementShared();
         }
     }
 
-    SharedPtr(SharedPtr&& other) noexcept : ptr_(other.get()), RefCounter(other.RefCounter) {
+    SharedPtr(SharedPtr&& other) noexcept : ptr_(other.get()), ref_counter_(other.ref_counter_) {
         other.ptr_ = nullptr;
-        other.RefCounter = nullptr;
+        other.ref_counter_ = nullptr;
     }
 
     ~SharedPtr() {
@@ -41,13 +41,13 @@ public:
     }
 
 
-    SharedPtr(const WeakPtr<T>& weak) : ptr_(weak.ptr_), RefCounter(weak.RefCounter) {
-        if (RefCounter && RefCounter->SharedCount() > 0) {
-            RefCounter->IncrementShared();
+    SharedPtr(const WeakPtr<T>& weak) : ptr_(weak.ptr_), ref_counter_(weak.ref_counter_) {
+        if (ref_counter_ && ref_counter_->SharedCount() > 0) {
+            ref_counter_->IncrementShared();
         }
         else {
             ptr_ = nullptr;
-            RefCounter = nullptr;
+            ref_counter_ = nullptr;
         }
     }
 
@@ -55,9 +55,9 @@ public:
         if (this != &other) {
             release();
             ptr_ = other.ptr_;
-            RefCounter = other.RefCounter;
-            if (RefCounter) {
-                RefCounter->IncrementShared();
+            ref_counter_ = other.ref_counter_;
+            if (ref_counter_) {
+                ref_counter_->IncrementShared();
             }
         }
         return *this;
@@ -67,9 +67,9 @@ public:
         if (this != &other) {
             release();
             ptr_ = other.ptr_;
-            RefCounter = other.RefCounter;
+            ref_counter_ = other.ref_counter_;
             other.ptr_ = nullptr;
-            other.RefCounter = nullptr;
+            other.ref_counter_ = nullptr;
         }
         return *this;
     }
@@ -83,7 +83,7 @@ public:
     }
 
     size_t use_count() const noexcept {
-        return RefCounter ? RefCounter->SharedCount() : 0;
+        return ref_counter_ ? ref_counter_->SharedCount() : 0;
     }
 
     T& operator*() const {
@@ -107,10 +107,10 @@ public:
             ptr_ = new_ptr; 
             
             if (new_ptr) {
-                RefCounter = new ControlBlock(true);
+                ref_counter_ = new ControlBlock(true);
             }
             else {
-                RefCounter = nullptr;
+                ref_counter_ = nullptr;
             }
         }
     }
@@ -118,16 +118,16 @@ public:
 
 private:
     void release() {
-        if (RefCounter) {
-            RefCounter->DecrementShared();
-            if (RefCounter->SharedCount() == 0) {
+        if (ref_counter_) {
+            ref_counter_->DecrementShared();
+            if (ref_counter_->SharedCount() == 0) {
                 delete ptr_;
-                if (RefCounter->WeakCount() == 0) {
-                    delete RefCounter;
+                if (ref_counter_->WeakCount() == 0) {
+                    delete ref_counter_;
                 }
             }
             ptr_ = nullptr;
-            RefCounter = nullptr;
+            ref_counter_ = nullptr;
         }
     }
 

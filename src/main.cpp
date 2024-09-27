@@ -1000,7 +1000,7 @@ int main() {
 
         int choice;
         std::cin >> choice;
-        SmartPointerManager<int> managerInt; // Создаем экземпляр для очистки буфера ввода
+        SmartPointerManager<int> managerInt;
         managerInt.clearInputBuffer();
 
         if (choice == 1) {

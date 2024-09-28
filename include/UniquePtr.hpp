@@ -41,7 +41,7 @@ public:
     
     T* operator->() const noexcept { return ptr_; }
     
-    T* get() const { return ptr_; }
+    const T* get() const { return ptr_; }
 
     T* release() noexcept {
         T* tmp = ptr_;

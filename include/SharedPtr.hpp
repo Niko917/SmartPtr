@@ -74,7 +74,7 @@ public:
         return *this;
     }
 
-    T* get() const noexcept {
+    const T* get() const noexcept {
         return ptr_;
     }
 

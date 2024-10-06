@@ -25,13 +25,13 @@ public:
         }
     }
 
-    SharedPtr(const SharedPtr& other) : ptr_(other.get()), ref_counter_(other.ref_counter_) {
+    SharedPtr(const SharedPtr& other) : ptr_(other.ptr_), ref_counter_(other.ref_counter_) {
         if (ref_counter_) {
             ref_counter_->IncrementShared();
         }
     }
 
-    SharedPtr(SharedPtr&& other) noexcept : ptr_(other.get()), ref_counter_(other.ref_counter_) {
+    SharedPtr(SharedPtr&& other) noexcept : ptr_(other.ptr_), ref_counter_(other.ref_counter_) {
         other.ptr_ = nullptr;
         other.ref_counter_ = nullptr;
     }

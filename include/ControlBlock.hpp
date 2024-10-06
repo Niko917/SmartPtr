@@ -1,7 +1,6 @@
 #pragma once
 #include <cstddef>
 
-
 class ControlBlock {
 private:
     size_t shared_counter_;
